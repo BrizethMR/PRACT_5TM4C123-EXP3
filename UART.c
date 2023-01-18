@@ -18,7 +18,7 @@ extern void Configurar_UART0(void)
     SYSCTL->RCGCGPIO |= (1<<0);     //Paso 2 (RCGCGPIO) pag.340 Enable clock port A
 
     //(GPIOAFSEL) pag.671 PARA FUNCIONES ALTERNATIVAS  EN LOS PINES A1 Y A0 
-    GPIOA->AFSEL = (1<<1) | (1<<0); // PARA PIN 0 Y 1
+    GPIOA->AFSEL = (1<<1) | (1<<0); // PARA PIN 0 Y 1, UNO DEBE ENENVIAR (Tx) y otro debe recibir (Rx)
 
     //GPIO Port Control (GPIOPCTL) PA0-> U0Rx PA1-> U0Tx pag.688
     // CADA 4 BITS CORRESPONDEN A UN PIN 
@@ -34,7 +34,8 @@ extern void Configurar_UART0(void)
 
     // UART Integer Baud-Rate Divisor (UARTIBRD) pag.914
     /*
-    BRD = fckl/(16*baud-rate) = 20,000,000 / (16*57600) = 21.7013
+    BRD = fckl/(16*baud-rate) = 20,000,000 / (16*57600) = 21.7013 
+    // ********  no olvidar cambiar la velocidad en simulink por 57600 
     UARTFBRD[DIVFRAC] = integer(.7013 * 64 + 0.5) = 45.3 -> redondear hacia arriba = 46
     */
     UART0->IBRD = 21;
@@ -44,7 +45,8 @@ extern void Configurar_UART0(void)
 
     //  UART Line Control (UARTLCRH) pag.916
     // ox3 porque tiene una longitud de 8 bits -> 1<<4 porque se habilita FIFO 
-    UART0->LCRH = (0x3<<5)|(1<<4);
+    UART0->LCRH = (0x3<<5)|(1<<4); // 0x3 ES PARA LA LONGITUD DE 8 BITS 
+    // ASIGNAR UNN 4 HABILIDA EL FIFO 
 
     //  UART Clock Configuration(UARTCC) pag.939
     // SE PONE 0 PARA ESPICIFICAR QUE SE TRABA CON EL RELOJ DEL SISTEMA
@@ -58,18 +60,21 @@ extern void Configurar_UART0(void)
 
 }
 
-/*extern char readChar(void)
+// FUNCIÓ PARA QUE SE PUEDA RECIBIR UN DATO 
+extern char readChar(void)
 {
     //UART FR flag pag 911
     //UART DR data 906
     int v;
     char c;
-    while((UART0->FR & (1<<4)) != 0 );
+    while((UART0->FR & (1<<4)) != 0 ); // SABRA QUE EXISTE UN DATO EN EL BUFFER
+    // ESPERARA Y REGRESARA EL DATO POSTERIORMENTE 
     v = UART0->DR & 0xFF;
     c = v;
     return c;
 }
-extern void printChar(char c)
+
+/* extern void printChar(char c)
 {
     while((UART0->FR & (1<<5)) != 0 );
     UART0->DR = c;

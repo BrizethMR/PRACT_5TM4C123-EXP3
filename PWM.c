@@ -25,7 +25,7 @@ extern void Configura_Reg_PWM1(uint16_t freq)
     SYSCTL->RCGCGPIO |= (1<<1)|(1<<4); /*Enable reloj de GPIO Puerto F pag 340 pin 5*/
 
     /*ENABLE O DISABLE DIVIRSOR P. 254*/ 
-    SYSCTL->RCC &= ~(1<<20)|(0<<19)|(1<<18)|(0<<17); //*****************************************************
+    SYSCTL->RCC &= ~(1<<20); // AQUI SE DESABILITA EL DIVISOR p.254 
     
     /*PORQUE SALEN 5MIL CUENTAS QUE CABEN EN 16 BITS DEL CONTADOR DEL PWM, 20 MILLONES/50 = 5 MIL CUENTAS*/
     /*EL 20 INDICA SI SE DIVIDE O NO, EN ESTE CASO SE ESTA DIVIDIENDO P. 254*/
@@ -64,7 +64,8 @@ extern void Configura_Reg_PWM1(uint16_t freq)
     PWM0->_2_GENA = 0x0000008C; // EL GENERADOR 2 TRABAJA CON EL PWM4 Y CON EL COMPARADOR A 
 
     // **************************************************************
-    PWM0->_0_LOAD = 50000; /*cuentas = fclk/fpwm  para 1khz cuentas = (20,000,000/50)*/
+    // PARA LAS CUENTAS Y EL CICLO DE TRABAJO 
+    PWM0->_0_LOAD = 50000; /*cuentas = fclk/fpwm*/
     PWM0->_1_LOAD = 50000;
     PWM0->_2_LOAD = 50000;
 

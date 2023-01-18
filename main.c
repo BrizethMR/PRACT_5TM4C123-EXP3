@@ -16,7 +16,7 @@ int main(void)
  */
 
     Configurar_PLL(_20MHZ);  //Confiuracion de velocidad de reloj
-    Configurar_UART0();//Yo FCLK 20MHZ Baudrate 9600
+    Configurar_UART0();//Yo FCLK 20MHZ Baudrate 57600 
     //Configura_Reg_ADC0();
     Configura_Reg_PWM1(8);
     
